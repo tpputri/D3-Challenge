@@ -1,24 +1,14 @@
-// @TODO: YOUR CODE HERE!
-var svgWidth = 960;
-var svgHeight = 500;
+const MARGIN = { LEFT: 20, RIGHT: 100, TOP: 50, BOTTOM: 100 }
+const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
+const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
 
-var margin = {
-  top: 20,
-  right: 40,
-  bottom: 80,
-  left: 100
-};
+const svg = d3.select("#chart-area").append("svg")
+  .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
+  .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
 
-var width = svgWidth - margin.left - margin.right;
-var height = svgHeight - margin.top - margin.bottom;
+const g = svg.append("g")
+  .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
 
-// Create an SVG wrapper, append an SVG group that will hold our chart,
-// and shift the latter by left and top margins.
-var svg = d3
-  .select("#scatter")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight);
 
 // Append an SVG group
 var chartGroup = svg.append("g")
