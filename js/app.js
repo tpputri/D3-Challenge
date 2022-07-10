@@ -1,23 +1,31 @@
-const MARGIN = { LEFT: 20, RIGHT: 100, TOP: 50, BOTTOM: 100 }
-const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
-const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
+// @TODO: YOUR CODE HERE!
+var svgWidth = 960;
+var svgHeight = 500;
 
-const svg = d3.select("#chart-area").append("svg")
-  .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
-  .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
+var margin = {
+  top: 20,
+  right: 40,
+  bottom: 80,
+  left: 100
+};
 
-const g = svg.append("g")
-  .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
+var width = svgWidth - margin.left - margin.right;
+var height = svgHeight - margin.top - margin.bottom;
 
+// Create an SVG wrapper, append an SVG group that will hold our chart,
+// and shift the latter by left and top margins.
+var svg = d3
+  .select("#scatter")
+  .append("svg")
+  .attr("width", svgWidth)
+  .attr("height", svgHeight);
 
 // Append an SVG group
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 // Initial Params
-// set radius size for circle markers
-var radius = Math.min(svgWidth / 40, svgHeight / 40);
-console.log(`radius size ${radius}`)
+var chosenXAxis = "";
 
 // function used for updating x-scale var upon click on axis label
 function xScale(Data, chosenXAxis) {
@@ -130,14 +138,13 @@ d3.csv("data/data.csv").then(function (D3Data, err) {
   chosenYAxis = D3Data.columns[j];
 
 
-  // initial axes
-  var bottomAx = d3.axisBottom(xLinearScale);
-  var leftAx = d3.axisLeft(yLinearScale);
+  // Cal xLinearScale and YLinearScale function above csv import
+  var xLinearScale = xScale(D3Data, chosenXAxis);
+  var yLinearScale = yScale(D3Data, chosenYAxis);
 
-  var xAxis = chartGroup.append("g")
-    .classed("x-axis", true)
-    .attr("transform", `translate(0, ${height})`)
-    .call(bottomAx);
+  // Create initial axis functions
+  var bottomAxis = d3.axisBottom(xLinearScale);
+  var leftAxis = d3.axisLeft(yLinearScale);
 
   // append x axis
   var xAxis = chartGroup.append("g")
@@ -185,12 +192,12 @@ d3.csv("data/data.csv").then(function (D3Data, err) {
   var YlabelsGroup = chartGroup.append("g")
     .attr("transform", "rotate(-90)");
 
-  var obesityLabel = yLabelsGroup.append("text")
-    .attr("y", 0 - margin.left + 40)
-    .attr("x", 0 - (height / 2))
-    .attr("value", "obesity")
-    .classed("inactive", true)
-    .text("% Obese");
+  var XLabel0 = XlabelsGroup.append("text")
+    .attr("x", 0)
+    .attr("y", 20)
+    .attr("value", 3) // value to grab for event listener
+    .classed("active", true)
+    .text("In Poverty (%)");
 
   var XLabel1 = XlabelsGroup.append("text")
     .attr("x", 0)
@@ -249,6 +256,7 @@ d3.csv("data/data.csv").then(function (D3Data, err) {
         chosenXAxis = D3Data.columns[value];
         convert(value);
 
+        // console.log(chosenXAxis)
 
         // functions here found above csv import
         // updates x scale for new data
@@ -270,40 +278,6 @@ d3.csv("data/data.csv").then(function (D3Data, err) {
         XLabel2.classed("inactive", true);
         d3.select(this).classed("inactive", false);
         d3.select(this).classed("active", true);
-
-        if (activeXAxis === "poverty") {
-          povertyLabel
-            .classed("active", true)
-            .classed("inactive", false);
-          ageLabel
-            .classed("active", false)
-            .classed("inactive", true);
-          incomeLabel
-            .classed("active", false)
-            .classed("inactive", true);
-        }
-        else if (activeXAxis === "age") {
-          povertyLabel
-            .classed("active", false)
-            .classed("inactive", true);
-          ageLabel
-            .classed("active", true)
-            .classed("inactive", false);
-          incomeLabel
-            .classed("active", false)
-            .classed("inactive", true);
-        }
-        else if (activeXAxis === "income") {
-          povertyLabel
-            .classed("active", false)
-            .classed("inactive", true);
-          ageLabel
-            .classed("active", false)
-            .classed("inactive", true);
-          incomeLabel
-            .classed("active", true)
-            .classed("inactive", false);
-        }
 
       }
     });
